@@ -101,36 +101,36 @@ const contactMethods = [
     availability: "24/7",
     action: "email",
   },
-  {
-    icon: <MessageCircle className="w-8 h-8" />,
-    title: "Live Chat",
-    description: "Instant help from our team",
-    contact: "Available on website",
-    responseTime: "Usually instant",
-    color: "from-green-500 to-emerald-500",
-    availability: "9 AM - 9 PM PST",
-    action: "chat",
-  },
-  {
-    icon: <Phone className="w-8 h-8" />,
-    title: "Phone Support",
-    description: "Speak directly with our team",
-    contact: "+1 (555) 123-4567",
-    responseTime: "Immediate",
-    color: "from-purple-500 to-indigo-500",
-    availability: "Mon-Fri, 9 AM - 6 PM PST",
-    action: "phone",
-  },
-  {
-    icon: <Calendar className="w-8 h-8" />,
-    title: "Schedule a Call",
-    description: "Book a personalized consultation",
-    contact: "Book online",
-    responseTime: "Same day",
-    color: "from-pink-500 to-rose-500",
-    availability: "Flexible scheduling",
-    action: "schedule",
-  },
+  // {
+  //   icon: <MessageCircle className="w-8 h-8" />,
+  //   title: "Live Chat",
+  //   description: "Instant help from our team",
+  //   contact: "Available on website",
+  //   responseTime: "Usually instant",
+  //   color: "from-green-500 to-emerald-500",
+  //   availability: "9 AM - 9 PM PST",
+  //   action: "chat",
+  // },
+  // {
+  //   icon: <Phone className="w-8 h-8" />,
+  //   title: "Phone Support",
+  //   description: "Speak directly with our team",
+  //   contact: "+1 (555) 123-4567",
+  //   responseTime: "Immediate",
+  //   color: "from-purple-500 to-indigo-500",
+  //   availability: "Mon-Fri, 9 AM - 6 PM PST",
+  //   action: "phone",
+  // },
+  // {
+  //   icon: <Calendar className="w-8 h-8" />,
+  //   title: "Schedule a Call",
+  //   description: "Book a personalized consultation",
+  //   contact: "Book online",
+  //   responseTime: "Same day",
+  //   color: "from-pink-500 to-rose-500",
+  //   availability: "Flexible scheduling",
+  //   action: "schedule",
+  // },
 ]
 
 const supportCategories = [
@@ -352,7 +352,7 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Methods */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      {/* <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -405,7 +405,7 @@ export default function ContactPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Contact Form and Support Categories */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/5" id="contact-form">
@@ -472,7 +472,7 @@ export default function ContactPage() {
                         </div>
                       </div>
 
-                      <div className="grid md:grid-cols-2 gap-6">
+                      {/* <div className="grid md:grid-cols-2 gap-6">
                         <div>
                           <Label htmlFor="phone" className="text-white mb-2 block">
                             Phone Number
@@ -522,9 +522,9 @@ export default function ContactPage() {
                             </option>
                           </select>
                         </div>
-                      </div>
+                      </div> */}
 
-                      <div>
+                      {/* <div>
                         <Label htmlFor="priority" className="text-white mb-2 block">
                           Priority Level
                         </Label>
@@ -548,7 +548,7 @@ export default function ContactPage() {
                             Critical - Service disruption
                           </option>
                         </select>
-                      </div>
+                      </div> */}
 
                       <div>
                         <Label htmlFor="subject" className="text-white mb-2 block">
@@ -640,7 +640,7 @@ export default function ContactPage() {
               </Card>
 
               {/* Quick Actions */}
-              <Card className="bg-white/10 border-white/20 backdrop-blur-lg">
+              {/* <Card className="bg-white/10 border-white/20 backdrop-blur-lg">
                 <CardContent className="p-8">
                   <h3 className="text-2xl font-bold text-white mb-6">Quick Actions</h3>
                   <div className="space-y-4">
@@ -670,10 +670,10 @@ export default function ContactPage() {
                     </Button>
                   </div>
                 </CardContent>
-              </Card>
+              </Card> */}
 
               {/* Emergency Contact */}
-              <Card className="bg-gradient-to-r from-red-500/20 to-orange-500/20 border-red-500/30 backdrop-blur-lg">
+              {/* <Card className="bg-gradient-to-r from-red-500/20 to-orange-500/20 border-red-500/30 backdrop-blur-lg">
                 <CardContent className="p-8">
                   <div className="flex items-center gap-3 mb-4">
                     <AlertCircle className="w-6 h-6 text-red-400" />
@@ -699,7 +699,7 @@ export default function ContactPage() {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </Card> */}
             </motion.div>
           </div>
         </div>

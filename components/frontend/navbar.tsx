@@ -166,14 +166,14 @@ export default function Navbar() {
                 <>
                   <Button
                     variant="outline"
-                    className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                    className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white cursor-pointer"
                     onClick={handleSignInClick}
                   >
                     <User className="w-4 h-4 mr-2" />
                     Sign In
                   </Button>
                   <Button
-                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                    className="bg-gradient-to-r cursor-pointer from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
                     onClick={handleSignUpClick}
                   >
                     Get Started

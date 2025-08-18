@@ -20,38 +20,35 @@ export default function Footer() {
       title: "Services",
       links: [
         { name: "Quick shout-outs", href: "/services?service=shoutouts" },
-        { name: "Personalised video messages", href: "/services?service=personal" },
+        { name: "Personalised and Motivational video messages", href: "/services?service=personal" },
         { name: "Roast someone", href: "/services?service=roast" },
-        { name: "5min Live interaction", href: "/services?service=live" },
+        { name: "Live interaction", href: "/services?service=live" },
         { name: "Business endorsements", href: "/services?service=business" },
-        { name: "Motivational video messages", href: "/services?service=motivation" },
+        // { name: "Motivational video messages", href: "/services?service=motivation" },
       ],
     },
-        {
-      title: "Company",
-      links: [
-        { name: "Terms and Conditions", href: "/terms" },
-        { name: "Privacy Policy", href: "/privacy" },
-        { name: "Community Guidelines", href: "/safety" },
-      ],
-    },
+    //     {
+    //   title: "Company",
+    //   links: [
+    //     { name: "Terms and Conditions", href: "/terms" },
+    //     { name: "Privacy Policy", href: "/privacy" },
+    //     { name: "Community Guidelines", href: "/safety" },
+    //   ],
+    // },
     {
       title: "Support",
       links: [
         // { name: "Help Center", href: "/help" },
         { name: "Contact Us", href: "/contact" },
         { name: "FAQ", href: "/faq" },
-        // { name: "Safety Guidelines", href: "/safety" },
+        { name: "Safety Guidelines", href: "/safety" },
       ],
     },
   ]
 
   const socialLinks = [
-    { icon: Facebook, href: "#", label: "Facebook" },
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Youtube, href: "#", label: "YouTube" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
+    { icon: Facebook, href: "https://www.facebook.com/people/Kia-Ora-Kahi/61579284869536", label: "Facebook" },
+    { icon: Instagram, href: "https://www.instagram.com/kiaorakahi", label: "Instagram" },
   ]
 
   return (
@@ -176,7 +173,7 @@ export default function Footer() {
                 Terms of Service
               </Link>
               <Link href="/cookies" className="text-yellow-200 hover:text-white transition-colors duration-200">
-                Cookie Policy
+                Community Guidelines
               </Link>
             </div>
 

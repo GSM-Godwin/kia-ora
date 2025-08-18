@@ -593,7 +593,7 @@ export default function KiaOraHomepage() {
       <Footer />
 
       {/* Live Chat Widget */}
-      <LiveChatWidget />
+      {/* <LiveChatWidget /> */}
     </div>
   )
 }
