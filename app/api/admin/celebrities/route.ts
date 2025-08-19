@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
         name: celebrity.user.name || "Celebrity",
         email: celebrity.user.email || "",
         category: celebrity.category || "Entertainment",
-        basePrice: celebrity.pricePersonal || celebrity.price || 299,
+        // basePrice: celebrity.pricePersonal || celebrity.price || 299,
         rating: celebrity.averageRating || 0,
         totalBookings: celebrity._count.bookings || 0,
         totalEarnings: Math.round(totalEarnings / 100), // Convert from cents to dollars

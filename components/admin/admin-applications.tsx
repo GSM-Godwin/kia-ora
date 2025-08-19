@@ -21,10 +21,14 @@ import {
   Clock,
   User,
   Briefcase,
+  DollarSign,
   Share2,
   FileText,
   ExternalLink,
   TrendingUp,
+  ImageIcon,
+  PlayCircle,
+  Link2,
 } from "lucide-react"
 
 interface Application {
@@ -41,19 +45,28 @@ interface Application {
   tiktokHandle?: string
   youtubeHandle?: string
   otherSocialMedia?: string
+  followerCount: string
+  basePrice: number
+  rushPrice: number
   languages: string[]
+  availability: string
   specialRequests?: string
-  hasProfilePhoto: boolean
-  hasIdDocument: boolean
-  hasVerificationDocument: boolean
-  profilePhotoUrl?: string
-  idDocumentUrl?: string
-  verificationDocumentUrl?: string
   status: string
   createdAt: string
   reviewNotes?: string
   reviewedAt?: string
   reviewedBy?: string
+  merchandiseLink?: string
+  hasIdDocumentFront: boolean
+  hasIdDocumentBack: boolean
+  idDocumentFrontUrl?: string
+  idDocumentBackUrl?: string
+  hasIntroVideo: boolean
+  introVideoUrl?: string
+  agreeToTerms: boolean
+  profilePhotoUrl?: string
+  idDocumentUrl?: string
+  verificationDocumentUrl?: string
 }
 
 interface ApplicationStats {
@@ -71,7 +84,7 @@ export function AdminApplications() {
   const [stats, setStats] = useState<ApplicationStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
+  const [statusFilter, setStatusFilter] = useState("PENDING")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null)
   const [showDetailModal, setShowDetailModal] = useState(false)
@@ -349,7 +362,7 @@ export function AdminApplications() {
                       onClick={() => handleViewApplication(application)}
                       variant="outline"
                       size="sm"
-                      className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10"
+                      className="border-purple-500/30 text-purple-300 bg-purple-500/10"
                     >
                       <Eye className="w-4 h-4 mr-2" />
                       Review
@@ -409,9 +422,11 @@ export function AdminApplications() {
                     {selectedApplication.fullName.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
-                <div>
-                  <h2 className="text-2xl font-bold text-white">{selectedApplication.fullName}</h2>
-                  <p className="text-gray-400">{selectedApplication.email}</p>
+                <div className="break-words overflow-hidden">
+                  <h2 className="text-2xl font-bold text-white break-words overflow-hidden text-ellipsis">
+                    {selectedApplication.fullName}
+                  </h2>
+                  <p className="text-gray-400 break-words overflow-hidden text-ellipsis">{selectedApplication.email}</p>
                   <div className="flex items-center gap-2 mt-2">
                     <Badge className={getStatusColor(selectedApplication.status)}>{selectedApplication.status}</Badge>
                     <Badge variant="outline" className="border-purple-500/30 text-purple-300">
@@ -424,19 +439,27 @@ export function AdminApplications() {
               {/* Tabs */}
               <Tabs defaultValue="overview" className="space-y-6">
                 <TabsList className="bg-white/10 border-white/20">
-                  <TabsTrigger value="overview" className="data-[state=active]:bg-purple-500">
+                  <TabsTrigger value="overview" className="data-[state=active]:bg-purple-500 text-white data-[state=active]:text-black">
                     <User className="w-4 h-4 mr-2" />
                     Overview
                   </TabsTrigger>
-                  <TabsTrigger value="experience" className="data-[state=active]:bg-purple-500">
+                  <TabsTrigger value="documents" className="data-[state=active]:bg-purple-500 text-white data-[state=active]:text-black">
+                    <FileText className="w-4 h-4 mr-2" />
+                    Documents & Media
+                  </TabsTrigger>
+                  <TabsTrigger value="experience" className="data-[state=active]:bg-purple-500 text-white data-[state=active]:text-black">
                     <Briefcase className="w-4 h-4 mr-2" />
                     Experience
                   </TabsTrigger>
-                  <TabsTrigger value="social" className="data-[state=active]:bg-purple-500">
+                  {/* <TabsTrigger value="pricing" className="data-[state=active]:bg-purple-500 text-white data-[state=active]:text-black">
+                    <DollarSign className="w-4 h-4 mr-2" />
+                    Pricing
+                  </TabsTrigger> */}
+                  <TabsTrigger value="social" className="data-[state=active]:bg-purple-500 text-white data-[state=active]:text-black">
                     <Share2 className="w-4 h-4 mr-2" />
                     Social Media
                   </TabsTrigger>
-                  <TabsTrigger value="review" className="data-[state=active]:bg-purple-500">
+                  <TabsTrigger value="review" className="data-[state=active]:bg-purple-500 text-white data-[state=active]:text-black">
                     <FileText className="w-4 h-4 mr-2" />
                     Review
                   </TabsTrigger>
@@ -450,14 +473,14 @@ export function AdminApplications() {
                         <CardTitle className="text-white">Personal Information</CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <label className="text-sm text-gray-400">Full Name</label>
-                            <p className="text-white font-medium">{selectedApplication.fullName}</p>
+                            <p className="text-white font-medium break-words">{selectedApplication.fullName}</p>
                           </div>
                           <div>
                             <label className="text-sm text-gray-400">Email</label>
-                            <p className="text-white font-medium">{selectedApplication.email}</p>
+                            <p className="text-white font-medium break-words">{selectedApplication.email}</p>
                           </div>
                           <div>
                             <label className="text-sm text-gray-400">Phone</label>
@@ -499,64 +522,88 @@ export function AdminApplications() {
 
                     <Card className="bg-white/10 border-white/20 backdrop-blur-lg">
                       <CardHeader>
+                        <CardTitle className="text-white">Other Information</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div>
+                          <label className="text-sm text-gray-400">Special Requests</label>
+                          <p className="text-white font-medium break-words">
+                            {selectedApplication.specialRequests || "None"}
+                          </p>
+                        </div>
+                        <div>
+                          <label className="text-sm text-gray-400">Availability</label>
+                          <p className="text-white font-medium">{selectedApplication.availability}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </TabsContent>
+
+                {/* Documents & Media Tab */}
+                <TabsContent value="documents" className="space-y-6">
+                  <div className="grid lg:grid-cols-2 gap-6">
+                    <Card className="bg-white/10 border-white/20 backdrop-blur-lg">
+                      <CardHeader>
                         <CardTitle className="text-white">Documents</CardTitle>
                       </CardHeader>
-                      <CardContent>
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
+                      <CardContent className="space-y-4">
+                        <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
+                          <ImageIcon className="w-8 h-8 text-purple-400" />
+                          <div className="flex-1">
+                            <p className="text-white font-medium">Profile Photo</p>
+                            <p className="text-gray-400 text-sm">
+                              {selectedApplication.profilePhotoUrl ? "Uploaded" : "Not uploaded"}
+                            </p>
+                          </div>
+                          {selectedApplication.profilePhotoUrl && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-purple-500/30 text-purple-300 bg-transparent"
+                              onClick={() => window.open(selectedApplication.profilePhotoUrl, "_blank")}
+                            >
+                              <ExternalLink className="w-3 h-3 mr-1" />
+                              View
+                            </Button>
+                          )}
+                        </div>
+
+                        <div className="flex flex-col gap-3 p-3 bg-white/5 rounded-lg">
+                          <div className="flex items-center gap-3">
                             <FileText className="w-8 h-8 text-purple-400" />
                             <div className="flex-1">
-                              <p className="text-white font-medium">Profile Photo</p>
+                              <p className="text-white font-medium">Government ID - Front</p>
                               <p className="text-gray-400 text-sm">
-                                {selectedApplication.hasProfilePhoto ? "Uploaded" : "Not uploaded"}
+                                {selectedApplication.hasIdDocumentFront ? "Uploaded" : "Not uploaded"}
                               </p>
                             </div>
-                            {selectedApplication.profilePhotoUrl && (
+                            {selectedApplication.idDocumentFrontUrl && (
                               <Button
                                 size="sm"
                                 variant="outline"
                                 className="border-purple-500/30 text-purple-300 bg-transparent"
-                                onClick={() => window.open(selectedApplication.profilePhotoUrl, "_blank")}
+                                onClick={() => window.open(selectedApplication.idDocumentFrontUrl, "_blank")}
                               >
                                 <ExternalLink className="w-3 h-3 mr-1" />
                                 View
                               </Button>
                             )}
                           </div>
-                          <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
+                          <div className="flex items-center gap-3">
                             <FileText className="w-8 h-8 text-purple-400" />
                             <div className="flex-1">
-                              <p className="text-white font-medium">Government ID</p>
+                              <p className="text-white font-medium">Government ID - Back</p>
                               <p className="text-gray-400 text-sm">
-                                {selectedApplication.hasIdDocument ? "Uploaded" : "Not uploaded"}
+                                {selectedApplication.hasIdDocumentBack ? "Uploaded" : "Not uploaded"}
                               </p>
                             </div>
-                            {selectedApplication.idDocumentUrl && (
+                            {selectedApplication.idDocumentBackUrl && (
                               <Button
                                 size="sm"
                                 variant="outline"
                                 className="border-purple-500/30 text-purple-300 bg-transparent"
-                                onClick={() => window.open(selectedApplication.idDocumentUrl, "_blank")}
-                              >
-                                <ExternalLink className="w-3 h-3 mr-1" />
-                                View
-                              </Button>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
-                            <FileText className="w-8 h-8 text-purple-400" />
-                            <div className="flex-1">
-                              <p className="text-white font-medium">Verification Doc</p>
-                              <p className="text-gray-400 text-sm">
-                                {selectedApplication.hasVerificationDocument ? "Uploaded" : "Not uploaded"}
-                              </p>
-                            </div>
-                            {selectedApplication.verificationDocumentUrl && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="border-purple-500/30 text-purple-300 bg-transparent"
-                                onClick={() => window.open(selectedApplication.verificationDocumentUrl, "_blank")}
+                                onClick={() => window.open(selectedApplication.idDocumentBackUrl, "_blank")}
                               >
                                 <ExternalLink className="w-3 h-3 mr-1" />
                                 View
@@ -564,6 +611,67 @@ export function AdminApplications() {
                             )}
                           </div>
                         </div>
+
+                        <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
+                          <PlayCircle className="w-8 h-8 text-purple-400" />
+                          <div className="flex-1">
+                            <p className="text-white font-medium">Introduction Video</p>
+                            <p className="text-gray-400 text-sm">
+                              {selectedApplication.hasIntroVideo ? "Uploaded" : "Not uploaded"}
+                            </p>
+                          </div>
+                          {selectedApplication.introVideoUrl && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-purple-500/30 text-purple-300 bg-transparent"
+                              onClick={() => window.open(selectedApplication.introVideoUrl, "_blank")}
+                            >
+                              <ExternalLink className="w-3 h-3 mr-1" />
+                              View
+                            </Button>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
+                          <FileText className="w-8 h-8 text-purple-400" />
+                          <div className="flex-1">
+                            <p className="text-white font-medium">Verification Document</p>
+                            <p className="text-gray-400 text-sm">
+                              {selectedApplication.verificationDocumentUrl ? "Uploaded" : "Not uploaded"}
+                            </p>
+                          </div>
+                          {selectedApplication.verificationDocumentUrl && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-purple-500/30 text-purple-300 bg-transparent"
+                              onClick={() => window.open(selectedApplication.verificationDocumentUrl, "_blank")}
+                            >
+                              <ExternalLink className="w-3 h-3 mr-1" />
+                              View
+                            </Button>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-white/10 border-white/20 backdrop-blur-lg">
+                      <CardHeader>
+                        <CardTitle className="text-white">Terms Agreement</CardTitle>
+                      </CardHeader>
+                      <CardContent className="flex items-center justify-center p-6">
+                        {selectedApplication.agreeToTerms ? (
+                          <div className="text-center">
+                            <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
+                            <p className="text-white font-medium">Agreed to Terms</p>
+                          </div>
+                        ) : (
+                          <div className="text-center">
+                            <XCircle className="w-12 h-12 text-red-500 mx-auto mb-3" />
+                            <p className="text-white font-medium">Did Not Agree to Terms</p>
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   </div>
@@ -579,18 +687,38 @@ export function AdminApplications() {
                       <div className="space-y-4">
                         <div>
                           <label className="text-sm text-gray-400">Experience</label>
-                          <p className="text-white leading-relaxed whitespace-pre-wrap">
+                          <p className="text-white leading-relaxed whitespace-pre-wrap break-words">
                             {selectedApplication.experience}
                           </p>
                         </div>
-                        {selectedApplication.specialRequests && (
-                          <div>
-                            <label className="text-sm text-gray-400">Special Requests</label>
-                            <p className="text-white leading-relaxed whitespace-pre-wrap">
-                              {selectedApplication.specialRequests}
-                            </p>
-                          </div>
-                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                {/* Pricing Tab */}
+                <TabsContent value="pricing" className="space-y-6">
+                  <Card className="bg-white/10 border-white/20 backdrop-blur-lg">
+                    <CardHeader>
+                      <CardTitle className="text-white">Pricing Structure</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="text-center p-6 bg-white/5 rounded-lg">
+                          <h3 className="text-white font-semibold mb-2">Base Price</h3>
+                          <p className="text-3xl font-bold text-purple-300 mb-2">${selectedApplication.basePrice}</p>
+                          <p className="text-gray-400 text-sm">Standard delivery time</p>
+                        </div>
+                        <div className="text-center p-6 bg-white/5 rounded-lg">
+                          <h3 className="text-white font-semibold mb-2">Rush Price</h3>
+                          <p className="text-3xl font-bold text-purple-300 mb-2">${selectedApplication.rushPrice}</p>
+                          <p className="text-gray-400 text-sm">24-hour delivery</p>
+                        </div>
+                        <div className="text-center p-6 bg-white/5 rounded-lg">
+                          <h3 className="text-white font-semibold mb-2">Availability</h3>
+                          <p className="text-xl font-bold text-green-400 mb-2">{selectedApplication.availability}</p>
+                          <p className="text-gray-400 text-sm">Response time</p>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -611,7 +739,7 @@ export function AdminApplications() {
                             </div>
                             <div className="flex-1">
                               <p className="text-white font-medium">Instagram</p>
-                              <p className="text-gray-400 text-sm">{selectedApplication.instagramHandle}</p>
+                              <p className="text-gray-400 text-sm break-words">{selectedApplication.instagramHandle}</p>
                             </div>
                           </div>
                         )}
@@ -622,7 +750,7 @@ export function AdminApplications() {
                             </div>
                             <div className="flex-1">
                               <p className="text-white font-medium">Twitter</p>
-                              <p className="text-gray-400 text-sm">{selectedApplication.twitterHandle}</p>
+                              <p className="text-gray-400 text-sm break-words">{selectedApplication.twitterHandle}</p>
                             </div>
                           </div>
                         )}
@@ -633,32 +761,25 @@ export function AdminApplications() {
                             </div>
                             <div className="flex-1">
                               <p className="text-white font-medium">YouTube</p>
-                              <p className="text-gray-400 text-sm">{selectedApplication.youtubeHandle}</p>
+                              <p className="text-gray-400 text-sm break-words">{selectedApplication.youtubeHandle}</p>
                             </div>
                           </div>
                         )}
-                        {selectedApplication.tiktokHandle && (
-                          <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
-                            <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
-                              <Share2 className="w-5 h-5 text-white" />
-                            </div>
-                            <div className="flex-1">
-                              <p className="text-white font-medium">TikTok</p>
-                              <p className="text-gray-400 text-sm">{selectedApplication.tiktokHandle}</p>
-                            </div>
-                          </div>
-                        )}
-                        {selectedApplication.otherSocialMedia && (
+                        {selectedApplication.merchandiseLink && (
                           <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
                             <div className="w-10 h-10 bg-gray-500 rounded-lg flex items-center justify-center">
-                              <Share2 className="w-5 h-5 text-white" />
+                              <Link2 className="w-5 h-5 text-white" />
                             </div>
                             <div className="flex-1">
-                              <p className="text-white font-medium">Other Social</p>
-                              <p className="text-gray-400 text-sm">{selectedApplication.otherSocialMedia}</p>
+                              <p className="text-white font-medium">Merchandise</p>
+                              <p className="text-gray-400 text-sm break-words">{selectedApplication.merchandiseLink}</p>
                             </div>
                           </div>
                         )}
+                      </div>
+                      <div className="mt-6 p-4 bg-white/5 rounded-lg">
+                        <label className="text-sm text-gray-400">Follower Count</label>
+                        <p className="text-white font-medium text-lg">{selectedApplication.followerCount}</p>
                       </div>
                     </CardContent>
                   </Card>

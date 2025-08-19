@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Upload,
   Check,
@@ -26,11 +27,16 @@ import {
   BadgeIcon as IdCard,
   Loader2,
   CheckCircle,
+  Video,
+  Play,
+  ExternalLink,
+  ShoppingBag,
 } from "lucide-react"
 import { toast } from "sonner"
 import Navbar from "@/components/frontend/navbar"
 import Footer from "@/components/frontend/footer"
 import MobileNavbar from "@/components/frontend/mobile-navbar"
+import Link from "next/link"
 
 interface SocialMedia {
   instagram: string
@@ -51,6 +57,7 @@ interface FormData {
   // Professional Information
   category: string
   experience: string
+  merchandiseLink: string
 
   // Social Media
   socialMedia: SocialMedia
@@ -61,9 +68,16 @@ interface FormData {
 
   // Documents
   hasProfilePhoto: boolean
-  hasIdDocument: boolean
+  hasIdDocumentFront: boolean
+  hasIdDocumentBack: boolean
+  hasIntroVideo: boolean
   profilePhotoUrl?: string
-  idDocumentUrl?: string
+  idDocumentFrontUrl?: string
+  idDocumentBackUrl?: string
+  introVideoUrl?: string
+
+  // Terms Agreement
+  agreeToTerms: boolean
 }
 
 interface UploadedFile {
@@ -173,6 +187,7 @@ export default function JoinCelebrityPage() {
     nationality: "",
     category: "",
     experience: "",
+    merchandiseLink: "",
     socialMedia: {
       instagram: "",
       twitter: "",
@@ -183,9 +198,14 @@ export default function JoinCelebrityPage() {
     languages: [],
     specialRequests: "",
     hasProfilePhoto: false,
-    hasIdDocument: false,
+    hasIdDocumentFront: false,
+    hasIdDocumentBack: false,
+    hasIntroVideo: false,
     profilePhotoUrl: undefined,
-    idDocumentUrl: undefined,
+    idDocumentFrontUrl: undefined,
+    idDocumentBackUrl: undefined,
+    introVideoUrl: undefined,
+    agreeToTerms: false,
   })
 
   const [isMobile, setIsMobile] = useState(false)
@@ -231,14 +251,23 @@ export default function JoinCelebrityPage() {
 
       if (response.ok) {
         setUploadedFiles((prev) => ({ ...prev, [type]: result }))
-        updateFormData(type === "profile" ? "hasProfilePhoto" : "hasIdDocument", true)
-        // Store the actual URL
+
+        // Update form data based on upload type
         if (type === "profile") {
+          updateFormData("hasProfilePhoto", true)
           updateFormData("profilePhotoUrl", result.url)
-        } else if (type === "id") {
-          updateFormData("idDocumentUrl", result.url)
+        } else if (type === "id-front") {
+          updateFormData("hasIdDocumentFront", true)
+          updateFormData("idDocumentFrontUrl", result.url)
+        } else if (type === "id-back") {
+          updateFormData("hasIdDocumentBack", true)
+          updateFormData("idDocumentBackUrl", result.url)
+        } else if (type === "intro-video") {
+          updateFormData("hasIntroVideo", true)
+          updateFormData("introVideoUrl", result.url)
         }
-        toast.success(`${type} uploaded successfully!`)
+
+        toast.success(`${type.replace("-", " ")} uploaded successfully!`)
       } else {
         toast.error(result.error || "Upload failed")
       }
@@ -256,7 +285,13 @@ export default function JoinCelebrityPage() {
       case 2:
         return !!(formData.category && formData.experience.length >= 50 && formData.languages.length > 0)
       case 3:
-        return formData.hasProfilePhoto && formData.hasIdDocument
+        return (
+          formData.hasProfilePhoto &&
+          formData.hasIdDocumentFront &&
+          formData.hasIdDocumentBack &&
+          formData.hasIntroVideo &&
+          formData.agreeToTerms
+        )
       default:
         return false
     }
@@ -276,7 +311,7 @@ export default function JoinCelebrityPage() {
 
   const handleSubmit = async () => {
     if (!validateStep(3)) {
-      toast.error("Please complete all required fields.")
+      toast.error("Please complete all required fields and agree to the terms.")
       return
     }
 
@@ -644,6 +679,23 @@ export default function JoinCelebrityPage() {
                                 {formData.experience.length}/50 characters
                               </div>
                             </div>
+
+                            <div className="space-y-2 md:col-span-2">
+                              <Label htmlFor="merchandiseLink" className="text-white flex items-center gap-2">
+                                <ShoppingBag className="w-4 h-4" />
+                                Merchandise/Product Link (Optional)
+                              </Label>
+                              <Input
+                                id="merchandiseLink"
+                                value={formData.merchandiseLink}
+                                onChange={(e) => updateFormData("merchandiseLink", e.target.value)}
+                                className="bg-gray-900/50 border-gray-700 text-white placeholder:text-gray-400 focus:border-purple-500"
+                                placeholder="Link to your products, merchandise, or store"
+                              />
+                              <p className="text-gray-400 text-sm">
+                                Share a link to your merchandise, products, or online store (optional)
+                              </p>
+                            </div>
                           </div>
                         </div>
 
@@ -803,48 +855,205 @@ export default function JoinCelebrityPage() {
                           </div>
                         </div>
 
-                        {/* Government ID */}
+                        {/* Government ID - Front */}
                         <div className="space-y-4">
                           <div className="flex items-center gap-3">
                             <IdCard className="w-5 h-5 text-purple-400" />
                             <h3 className="text-lg font-semibold text-white">Government ID *</h3>
-                            {formData.hasIdDocument && <CheckCircle className="w-5 h-5 text-green-400" />}
+                            {formData.hasIdDocumentFront && formData.hasIdDocumentBack && (
+                              <CheckCircle className="w-5 h-5 text-green-400" />
+                            )}
                           </div>
                           <p className="text-gray-400 text-sm">
-                            Upload a clear photo of your government-issued ID (passport, driver's license, etc.)
+                            Upload clear photos of both the front and back of your government-issued ID (passport,
+                            driver's license, etc.)
                           </p>
+
+                          {/* Front of ID */}
+                          <div className="space-y-2">
+                            <Label className="text-white text-sm">Front of ID *</Label>
+                            <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-purple-500 transition-colors">
+                              <input
+                                type="file"
+                                id="id-document-front"
+                                accept="image/*,application/pdf"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0]
+                                  if (file) handleFileUpload(file, "id-front")
+                                }}
+                                className="hidden"
+                              />
+                              <label htmlFor="id-document-front" className="cursor-pointer">
+                                {uploadingFiles["id-front"] ? (
+                                  <div className="flex items-center justify-center gap-2">
+                                    <Loader2 className="w-5 h-5 animate-spin text-purple-400" />
+                                    <span className="text-white">Uploading...</span>
+                                  </div>
+                                ) : formData.hasIdDocumentFront ? (
+                                  <div className="flex items-center justify-center gap-2">
+                                    <CheckCircle className="w-5 h-5 text-green-400" />
+                                    <span className="text-green-400">Front of ID uploaded</span>
+                                  </div>
+                                ) : (
+                                  <div className="flex flex-col items-center gap-2">
+                                    <Upload className="w-8 h-8 text-gray-400" />
+                                    <span className="text-white">Click to upload front of ID</span>
+                                    <span className="text-gray-400 text-sm">PNG, JPG, PDF up to 5MB</span>
+                                  </div>
+                                )}
+                              </label>
+                            </div>
+                          </div>
+
+                          {/* Back of ID */}
+                          <div className="space-y-2">
+                            <Label className="text-white text-sm">Back of ID *</Label>
+                            <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-purple-500 transition-colors">
+                              <input
+                                type="file"
+                                id="id-document-back"
+                                accept="image/*,application/pdf"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0]
+                                  if (file) handleFileUpload(file, "id-back")
+                                }}
+                                className="hidden"
+                              />
+                              <label htmlFor="id-document-back" className="cursor-pointer">
+                                {uploadingFiles["id-back"] ? (
+                                  <div className="flex items-center justify-center gap-2">
+                                    <Loader2 className="w-5 h-5 animate-spin text-purple-400" />
+                                    <span className="text-white">Uploading...</span>
+                                  </div>
+                                ) : formData.hasIdDocumentBack ? (
+                                  <div className="flex items-center justify-center gap-2">
+                                    <CheckCircle className="w-5 h-5 text-green-400" />
+                                    <span className="text-green-400">Back of ID uploaded</span>
+                                  </div>
+                                ) : (
+                                  <div className="flex flex-col items-center gap-2">
+                                    <Upload className="w-8 h-8 text-gray-400" />
+                                    <span className="text-white">Click to upload back of ID</span>
+                                    <span className="text-gray-400 text-sm">PNG, JPG, PDF up to 5MB</span>
+                                  </div>
+                                )}
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Introduction Video */}
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-3">
+                            <Video className="w-5 h-5 text-purple-400" />
+                            <h3 className="text-lg font-semibold text-white">Introduction Video *</h3>
+                            {formData.hasIntroVideo && <CheckCircle className="w-5 h-5 text-green-400" />}
+                          </div>
+                          <p className="text-gray-400 text-sm">
+                            Upload a 15-30 second introduction video to help us get to know you better
+                          </p>
+
+                          {/* Example Video */}
+                          <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+                            <div className="flex items-start gap-3">
+                              <Play className="w-5 h-5 text-blue-400 mt-0.5" />
+                              <div>
+                                <h4 className="text-white font-semibold mb-1">Example Introduction Video</h4>
+                                <p className="text-blue-200 text-sm mb-3">
+                                  Here's an example of what your introduction video should look like:
+                                </p>
+                                <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                                      <Play className="w-6 h-6 text-white" />
+                                    </div>
+                                    <div>
+                                      <p className="text-white font-medium">Sample Introduction</p>
+                                      <p className="text-gray-400 text-sm">0:25 duration</p>
+                                    </div>
+                                  </div>
+                                  <p className="text-gray-300 text-sm mt-3">
+                                    "Hi! I'm [Your Name], and I'm excited to join Kia Ora Kahi! I love connecting with
+                                    fans and creating personalized messages. I can't wait to make something special just
+                                    for you!"
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
                           <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-purple-500 transition-colors">
                             <input
                               type="file"
-                              id="id-document"
-                              accept="image/*,application/pdf"
+                              id="intro-video"
+                              accept="video/*"
                               onChange={(e) => {
                                 const file = e.target.files?.[0]
-                                if (file) handleFileUpload(file, "id")
+                                if (file) handleFileUpload(file, "intro-video")
                               }}
                               className="hidden"
                             />
-                            <label htmlFor="id-document" className="cursor-pointer">
-                              {uploadingFiles.id ? (
+                            <label htmlFor="intro-video" className="cursor-pointer">
+                              {uploadingFiles["intro-video"] ? (
                                 <div className="flex items-center justify-center gap-2">
                                   <Loader2 className="w-5 h-5 animate-spin text-purple-400" />
                                   <span className="text-white">Uploading...</span>
                                 </div>
-                              ) : formData.hasIdDocument ? (
+                              ) : formData.hasIntroVideo ? (
                                 <div className="flex items-center justify-center gap-2">
                                   <CheckCircle className="w-5 h-5 text-green-400" />
-                                  <span className="text-green-400">ID document uploaded</span>
+                                  <span className="text-green-400">Introduction video uploaded</span>
                                 </div>
                               ) : (
                                 <div className="flex flex-col items-center gap-2">
                                   <Upload className="w-8 h-8 text-gray-400" />
-                                  <span className="text-white">Click to upload government ID</span>
-                                  <span className="text-gray-400 text-sm">PNG, JPG, PDF up to 5MB</span>
+                                  <span className="text-white">Click to upload introduction video</span>
+                                  <span className="text-gray-400 text-sm">
+                                    MP4, MOV, AVI up to 50MB (15-30 seconds)
+                                  </span>
                                 </div>
                               )}
                             </label>
                           </div>
                         </div>
+
+                        {/* Terms and Conditions Agreement */}
+                        <div className="space-y-4">
+  <Separator className="bg-gray-700" />
+  <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-6">
+    <div className="flex items-center gap-3">
+      <Checkbox
+        id="agree-terms"
+        checked={formData.agreeToTerms}
+        onCheckedChange={(checked) => updateFormData("agreeToTerms", checked)}
+        className="border-purple-500 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
+      />
+      <Label
+        htmlFor="agree-terms"
+        className="text-white text-sm cursor-pointer flex flex-wrap gap-1"
+      >
+        By clicking here, you agree to the{" "}
+        <Link
+          href="/terms"
+          className="text-blue-400 hover:text-blue-300 underlin"
+          target="_blank"
+        >
+          Kia Ora Kahi Terms and Conditions
+        </Link>
+        and acknowledge you have read the{" "}
+        <Link
+          href="/privacy"
+          className="text-blue-400 hover:text-blue-300 underline"
+          target="_blank"
+        >
+          Kia Ora Kahi Privacy Policy
+        </Link>
+        to learn how we collect, use and share your data.
+      </Label>
+    </div>
+  </div>
+</div>
+
 
                         {/* Privacy Notice */}
                         <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">

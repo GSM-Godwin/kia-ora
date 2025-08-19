@@ -142,9 +142,10 @@ model CelebrityApplication {
   dateOfBirth  String
   nationality  String?   // Made optional
 
-  // Professional Information - REMOVED profession field
-  category     String
-  experience   String    @db.Text  // Renamed from experience, now represents "Tell us about yourself"
+  // Professional Information
+  category        String
+  experience      String    @db.Text  // "Tell us about yourself"
+  merchandiseLink String?   // NEW: Optional merchandise/product link
 
   // Social Media
   instagramHandle   String?
@@ -153,17 +154,28 @@ model CelebrityApplication {
   youtubeHandle     String?
   otherSocialMedia  String?
 
-  // Additional Info - REMOVED followerCount, basePrice, rushPrice, availability, motivation
+  // Additional Info
   languages        String[]
   specialRequests  String?   @db.Text
 
-  // Documents
+  // Documents - Updated with new fields
   hasProfilePhoto          Boolean @default(false)
-  hasIdDocument           Boolean @default(false)
-  hasVerificationDocument Boolean @default(false)  // Already optional
+  hasIdDocument           Boolean @default(false)  // Keep for backward compatibility
+  hasIdDocumentFront      Boolean @default(false)  // NEW: Front of ID required
+  hasIdDocumentBack       Boolean @default(false)  // NEW: Back of ID required
+  hasIntroVideo           Boolean @default(false)  // NEW: Introduction video required
+  hasVerificationDocument Boolean @default(false)  // Keep existing field
+  
+  // Document URLs - Updated with new fields
   profilePhotoUrl         String?
-  idDocumentUrl          String?
-  verificationDocumentUrl String?  // Already optional
+  idDocumentUrl          String?  // Keep for backward compatibility
+  idDocumentFrontUrl     String?  // NEW: Front of ID URL
+  idDocumentBackUrl      String?  // NEW: Back of ID URL
+  introVideoUrl          String?  // NEW: Introduction video URL
+  verificationDocumentUrl String?  // Keep existing field
+
+  // Terms Agreement
+  agreeToTerms    Boolean @default(false)  // NEW: Required terms agreement
 
   // Application Status
   status        ApplicationStatus @default(PENDING)

@@ -60,7 +60,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       category: celebrity.category || "Entertainment",
       rating: celebrity.averageRating || 4.5,
       reviewCount: celebrity._count.reviews || 0,
-      price: celebrity.pricePersonal || celebrity.price || 299,
       responseTime: celebrity.responseTime || "24 hours",
       verified: celebrity.verified || false,
       featured: celebrity.featured || false,
@@ -77,14 +76,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       })),
       availability: {
         nextAvailable: celebrity.nextAvailable || "2024-01-15",
-        averageDelivery: celebrity.averageDelivery || "3-5 days",
         completionRate: celebrity.completionRate || 95,
         totalOrders: celebrity._count.bookings || 0,
-      },
-      pricing: {
-        personal: celebrity.pricePersonal || 299,
-        business: celebrity.priceBusiness || 599,
-        charity: celebrity.priceCharity || 199,
       },
       reviews: celebrity.reviews.map((review) => ({
         id: review.id,

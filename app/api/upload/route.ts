@@ -12,14 +12,24 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 15 * 1024 * 1024) {
       return NextResponse.json({ error: "File size too large. Maximum 5MB allowed." }, { status: 400 })
     }
 
     // Validate file type
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "application/pdf"]
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ error: "Invalid file type. Only images and PDFs are allowed." }, { status: 400 })
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp",
+      "application/pdf",
+      "video/mp4",
+      "video/webm",
+      "video/x-msvideo",   // AVI
+      "video/quicktime",   // MOV
+      "video/x-matroska"   // MKV
+    ];    if (!allowedTypes.includes(file.type)) {
+      return NextResponse.json({ error: "Invalid file type. Only videos, images and PDFs are allowed." }, { status: 400 })
     }
 
     // Generate unique filename

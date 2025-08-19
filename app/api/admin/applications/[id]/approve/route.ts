@@ -71,22 +71,16 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       const celebrity = await tx.celebrity.create({
         data: {
           userId: user.id,
-          bio: `${application.profession} with ${application.experience}`,
-          longBio: application.achievements,
+          bio: `${application.experience}`,
           category: application.category,
-          pricePersonal: application.basePrice,
-          priceBusiness: application.rushPrice,
-          priceCharity: Math.round(application.basePrice * 0.8),
           rating: 4.5,
           averageRating: 4.5,
           totalReviews: 0,
           completionRate: 95,
-          responseTime: application.availability || "24 hours",
           isActive: true,
           verified: true,
           featured: false,
           tags: application.languages || [],
-          achievements: [application.achievements],
           nextAvailable: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split("T")[0],
           coverImage: application.profilePhotoUrl || null,
           // Social media handles
@@ -140,7 +134,6 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       celebrity: {
         id: result.celebrity.id,
         category: result.celebrity.category,
-        pricePersonal: result.celebrity.pricePersonal,
         image: result.celebrity.coverImage,
       },
     })
